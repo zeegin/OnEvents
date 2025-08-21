@@ -56,7 +56,7 @@
         .container {max-width:1000px;margin:2em auto;padding:0 1em;}
         article.card {background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.25em;margin-bottom:1.5em;box-shadow:var(--shadow);} 
         .card-header {display:flex;align-items:center;gap:.75em;margin-bottom:.75em;}
-        .card-title {margin:0;font-size:1.25em;}
+        .card-title {margin:0;font-size:1.5em;}
         .meta {display:block;margin:.25em 0 .5em 0;}
         .meta-item {font-size:.95em;color:var(--muted);display:flex;align-items:baseline;margin:.15em 0;}
         .meta-item .icon {margin-right:.35em;}
@@ -92,77 +92,10 @@
   <h1 class="sr-only">Календарь событий OnEvents</h1>
 
   <div id="events">
-    <!-- Карточки событий -->
-    <article class="card" itemscope itemtype="https://schema.org/Event">
-      <div class="card-header">
-        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
-             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
-        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><span class="icon">📅</span><time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time></div>
-        <div class="meta-item"><span class="icon">📍</span><span itemprop="location" itemscope itemtype="https://schema.org/Place"><span itemprop="addressLocality">Санкт-Петербург, ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span></span></div>
-      </div>
-      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
-      <a href="#" onclick="return false;" role="button">Регистрация</a>
-    </article>
-    <article class="card" itemscope itemtype="https://schema.org/Event">
-      <div class="card-header">
-        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
-             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
-        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><span class="icon">📅</span><time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time></div>
-        <div class="meta-item"><span class="icon">📍</span><span itemprop="location" itemscope itemtype="https://schema.org/Place"><span itemprop="addressLocality">Санкт-Петербург, ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span></span></div>
-      </div>
-      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
-      <a href="#" onclick="return false;" role="button">Регистрация</a>
-    </article>
-    <article class="card" itemscope itemtype="https://schema.org/Event">
-      <div class="card-header">
-        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
-             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
-        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><span class="icon">📅</span><time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time></div>
-        <div class="meta-item"><span class="icon">📍</span><span itemprop="location" itemscope itemtype="https://schema.org/Place"><span itemprop="addressLocality">Санкт-Петербург, ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span></span></div>
-      </div>
-      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
-      <a href="#" onclick="return false;" role="button">Регистрация</a>
-    </article>
-    <article class="card" itemscope itemtype="https://schema.org/Event">
-      <div class="card-header">
-        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
-             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
-        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><span class="icon">📅</span><time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time></div>
-        <div class="meta-item"><span class="icon">📍</span><span itemprop="location" itemscope itemtype="https://schema.org/Place"><span itemprop="addressLocality">Санкт-Петербург, ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span></span></div>
-      </div>
-      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
-      <a href="#" onclick="return false;" role="button">Регистрация</a>
-    </article>
-    <article class="card" itemscope itemtype="https://schema.org/Event">
-      <div class="card-header">
-        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
-             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
-        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><span class="icon">📅</span><time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time></div>
-        <div class="meta-item"><span class="icon">📍</span><span itemprop="location" itemscope itemtype="https://schema.org/Place"><span itemprop="addressLocality">Санкт-Петербург, ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span></span></div>
-      </div>
-      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
-      <a href="#" onclick="return false;" role="button">Регистрация</a>
-    </article>
-
-    <!-- Можно добавить другие события здесь -->
+    {{ events }}
   </div>
 
-  <!-- Новый блок О проекте -->
+  <!-- Блок О проекте -->
    
   <section id="about">
     <h2>О проекте</h2>
