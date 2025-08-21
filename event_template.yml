@@ -1,0 +1,7 @@
+title: "Название события"
+date: "2025-09-15"       # формат YYYY-MM-DD
+city: "Москва"
+address: "ул. Арбат, 12"
+icon: "yc_msk.png"               # файл с картинкой
+description: "Краткое описание события, чтобы сразу понять, о чем оно."
+registration_url: "https://example.com/register"
