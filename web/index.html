@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>OnEvents</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Актуальные события и конференции по 1С в городах России.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@2.1.0/build/pure-min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        /* плавная прокрутка к якорям */
+        html { scroll-behavior: smooth; }
+
+        /* доступность */
+        .sr-only {position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+
+        /* базовая (светлая) тема по умолчанию через CSS-переменные */
+        :root {
+            --bg:#fafafa; --text:#111; --muted:#666;
+            --card-bg:#fff; --border:#ddd; --shadow:0 2px 4px rgba(0,0,0,.1);
+            --header-bg:#222; --header-text:#fff; --footer-bg:#222; --footer-text:#ccc;
+            --link:#0b76ef;
+        }
+        /* если система в тёмной теме и пользователь не выбирал — используем тёмные переменные */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg:#0f1115; --text:#e6e6e6; --muted:#a0a0a0;
+                --card-bg:#161a22; --border:#2a2f3a; --shadow:0 2px 6px rgba(0,0,0,.35);
+                --header-bg:#0b0e14; --header-text:#e6e6e6; --footer-bg:#0b0e14; --footer-text:#a6a6a6;
+                --link:#7cb3ff;
+            }
+        }
+        /* ЯВНЫЕ классы-темы перекрывают системные настройки */
+        .dark-theme {
+            --bg:#0f1115; --text:#e6e6e6; --muted:#a0a0a0;
+            --card-bg:#161a22; --border:#2a2f3a; --shadow:0 2px 6px rgba(0,0,0,.35);
+            --header-bg:#0b0e14; --header-text:#e6e6e6; --footer-bg:#0b0e14; --footer-text:#a6a6a6;
+            --link:#7cb3ff;
+        }
+        .light-theme {
+            --bg:#fafafa; --text:#111; --muted:#666;
+            --card-bg:#fff; --border:#ddd; --shadow:0 2px 4px rgba(0,0,0,.1);
+            --header-bg:#222; --header-text:#fff; --footer-bg:#222; --footer-text:#ccc;
+            --link:#0b76ef;
+        }
+
+        body {font-family:'JetBrains Mono', monospace;margin:0;padding:0;background:var(--bg);color:var(--text);word-break:break-word;transition:background .2s,color .2s;}
+
+        /* ссылки: hover всегда один и тот же оттенок */
+        a {color:var(--link);}
+        a:hover {color:#a2c8ff !important;}
+        header a {color:var(--header-text);}
+        header a:hover {color:#a2c8ff !important; text-decoration:underline;}
+
+        /* липкая шапка */
+        header {
+            position: sticky; /* держится сверху при прокрутке */
+            top: 0;
+            z-index: 1000;
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 1em;
+        }
+
+        .header-inner {max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+        .logo {font-size:1.5em;font-weight:bold;}
+        nav {display:flex;gap:1em;align-items:center;}
+
+        /* переключатель темы — только иконка, без рамок/фона/аутлайна */
+        .theme-toggle {appearance:none;-webkit-appearance:none;background:transparent;border:none;padding:0;margin:0;line-height:1;font-size:1.15em;color:var(--header-text);cursor:pointer;}
+        .theme-toggle:focus,.theme-toggle:active,.theme-toggle:hover {outline:none;box-shadow:none;border:none;background:transparent;}
+
+        .container {max-width:1000px;margin:2em auto;padding:0 1em;}
+
+        article.card {background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.25em 1.25em 1.1em;margin-bottom:1.5em;box-shadow:var(--shadow);transition:background .2s,border-color .2s,box-shadow .2s;}
+        .card-header {display:flex;align-items:center;gap:1em;margin-bottom:.75em;}
+        .logo-img {width:52px;height:52px;border-radius:50%;flex:0 0 auto;display:block;}
+        .card-title {margin:0;font-size:1.25em;line-height:1.2;}
+
+        /* мета-инфо: каждая строка отдельным блоком (дата и город – на разных строках) */
+        .meta {display:block;margin:.25em 0 .5em 0;}
+        .meta-item {font-size:.95em;color:var(--muted);display:flex;align-items:baseline;margin:.15ем 0;}
+        .meta-item .icon {margin-right:.35em;}
+
+        footer {background:var(--footer-bg);color:var(--footer-text);text-align:center;padding:1em;margin-top:2em;font-size:.9em;}
+
+        @media (max-width:600px) {
+            .header-inner {flex-direction:column;align-items:center;text-align:center;}
+            nav {margin-top:.5em;flex-direction:column;gap:.5em;}
+        }
+    </style>
+</head>
+<body>
+<div id="top"></div>
+<script>
+/* применяем сохранённую тему; если выбора не было — остаётся системная */
+(function initTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    const root = document.documentElement;
+    if (saved === 'dark') {
+      root.classList.remove('light-theme');
+      root.classList.add('dark-theme');
+    } else if (saved === 'light') {
+      root.classList.remove('dark-theme');
+      root.classList.add('light-theme'); // ВАЖНО: принудительно светлая, даже если ОС в тёмной
+    }
+  } catch(e){}
+})();
+</script>
+
+<header role="banner">
+  <div class="header-inner">
+    <div class="logo">OnEvents</div>
+    <nav aria-label="Главное меню">
+      <a href="#top">События</a>
+      <a href="#about">О проекте</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Переключить тему">
+        <span id="themeIcon" aria-hidden="true">🌓</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="sr-only">Календарь событий OnEvents</h1>
+
+  <div id="events">
+
+    <!-- 1. Желтый клуб Питер -->
+    <article class="card" itemscope itemtype="https://schema.org/Event">
+      <div class="card-header">
+        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
+             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
+        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📅</span>
+          <time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">🏙️</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="addressLocality">Санкт-Петербург</span>
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="address">ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span>
+          </span>
+        </div>
+      </div>
+      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
+      <a href="#" onclick="return false;" role="button" aria-label="Регистрация на «Желтый клуб Питер»">Регистрация</a>
+    </article>
+
+    <!-- 1. Желтый клуб Питер -->
+    <article class="card" itemscope itemtype="https://schema.org/Event">
+      <div class="card-header">
+        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
+             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
+        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📅</span>
+          <time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">🏙️</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="addressLocality">Санкт-Петербург</span>
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="address">ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span>
+          </span>
+        </div>
+      </div>
+      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
+      <a href="#" onclick="return false;" role="button" aria-label="Регистрация на «Желтый клуб Питер»">Регистрация</a>
+    </article>
+
+    <!-- 1. Желтый клуб Питер -->
+    <article class="card" itemscope itemtype="https://schema.org/Event">
+      <div class="card-header">
+        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
+             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
+        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📅</span>
+          <time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">🏙️</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="addressLocality">Санкт-Петербург</span>
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="address">ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span>
+          </span>
+        </div>
+      </div>
+      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
+      <a href="#" onclick="return false;" role="button" aria-label="Регистрация на «Желтый клуб Питер»">Регистрация</a>
+    </article>
+
+    <!-- 1. Желтый клуб Питер -->
+    <article class="card" itemscope itemtype="https://schema.org/Event">
+      <div class="card-header">
+        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
+             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
+        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📅</span>
+          <time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">🏙️</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="addressLocality">Санкт-Петербург</span>
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="address">ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span>
+          </span>
+        </div>
+      </div>
+      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
+      <a href="#" onclick="return false;" role="button" aria-label="Регистрация на «Желтый клуб Питер»">Регистрация</a>
+    </article>
+
+    <!-- 1. Желтый клуб Питер -->
+    <article class="card" itemscope itemtype="https://schema.org/Event">
+      <div class="card-header">
+        <img class="logo-img" alt="Логотип «Желтый клуб Питер»"
+             src='data:image/svg+xml;utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Ccircle cx="48" cy="48" r="48" fill="%23F2B705"/%3E%3Ctext x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="32" fill="%23ffffff"%3E%D0%96%D0%9A%3C/text%3E%3C/svg%3E'>
+        <h2 class="card-title" itemprop="name">Желтый клуб Питер</h2>
+      </div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📅</span>
+          <time itemprop="startDate" datetime="2025-09-10">10 сентября 2025</time>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">🏙️</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="addressLocality">Санкт-Петербург</span>
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+            <span itemprop="address">ул. Малая Посадская 7/4, 2 этаж, Эквиум Лофт</span>
+          </span>
+        </div>
+      </div>
+      <p>Желтый клуб — сообщество 1С программистов. Наша цель — расти профессионально вместе с единомышленниками из 1С сферы. Желтый клуб объединяет 1С разработчиков, 1С аналитиков и пользователей платформы 1С Предприятие.</p>
+      <a href="#" onclick="return false;" role="button" aria-label="Регистрация на «Желтый клуб Питер»">Регистрация</a>
+    </article>
+
+  </div>
+
+  <!-- О проекте как карточка -->
+  <article id="about" class="card">
+    <h2>О проекте</h2>
+    <p>OnEvents — это открытая платформа для отслеживания ключевых ИТ-событий и конференций в городах России.
+       Мы собираем актуальную информацию о митапах, форумах и семинарах, чтобы специалисты могли быстро находить мероприятия по интересам и месту проведения.</p>
+    <p>Проект создан энтузиастами, чтобы упростить обмен знаниями и развитие ИТ-сообщества.
+       Здесь публикуются даты, города и площадки, а также список основных спикеров.
+       Вы можете использовать сайт как календарь и вдохновляться новыми идеями.</p>
+  </article>
+</main>
+
+<footer role="contentinfo">
+  <small>© OnEvents, 2025. Дата актуальности: август 2025.</small>
+</footer>
+
+<script>
+/* логика переключения темы + иконка */
+(function themeToggle(){
+  const btn = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+  const root = document.documentElement;
+
+  function isDark(){ return root.classList.contains('dark-theme'); }
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.classList.remove('light-theme');
+      root.classList.add('dark-theme');
+      btn.setAttribute('aria-pressed','true'); icon.textContent='🌙';
+    } else {
+      root.classList.remove('dark-theme');
+      root.classList.add('light-theme'); // принудительно светлая тема
+      btn.setAttribute('aria-pressed','false'); icon.textContent='☀️';
+    }
+    try{ localStorage.setItem('theme', mode); }catch(e){}
+  }
+
+  btn.addEventListener('click', function(e){ e.preventDefault(); setTheme(isDark() ? 'light' : 'dark'); });
+
+  try{
+    const saved = localStorage.getItem('theme');
+    if(saved==='dark'){ icon.textContent='🌙'; btn.setAttribute('aria-pressed','true'); }
+    else if(saved==='light'){ icon.textContent='☀️'; btn.setAttribute('aria-pressed','false'); }
+    else {
+      if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+        icon.textContent='🌙'; btn.setAttribute('aria-pressed','true');
+      } else {
+        icon.textContent='☀️'; btn.setAttribute('aria-pressed','false');
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<!-- Плавная прокрутка к якорям через JS для максимальной совместимости -->
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener("click", function (e) {
+    const targetId = this.getAttribute("href").substring(1);
+    if (!targetId) return;
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      e.preventDefault();
+      targetEl.scrollIntoView({ behavior: "smooth" });
+      history.pushState(null, "", "#" + targetId);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
