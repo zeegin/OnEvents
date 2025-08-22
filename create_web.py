@@ -1,6 +1,7 @@
 import os
 import yaml
 from datetime import datetime
+from datetime import date
 from pathlib import Path
 from babel.dates import format_date
 import shutil
@@ -62,7 +63,12 @@ def render_event(e):
 events_html = "\n".join(render_event(e) for e in events)
 
 # Подставляем в шаблон
-result_html = template.replace("{{ events }}", events_html)
+today_date_str = format_date(date.today(), format="d MMMM y", locale="ru")
+result_html = (
+    template
+    .replace("{{ events }}", events_html)
+    .replace("{{ builddate }}", today_date_str)
+)
 
 # Создаем папку site при необходимости
 OUTPUT_DIR.mkdir(exist_ok=True)
