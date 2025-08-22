@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   schedule:
-    # каждые сутки в 03:15 UTC
+    # каждый день в 03:15 UTC
     - cron: '15 3 * * *'
   workflow_dispatch: {}
 
@@ -17,7 +17,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: '3.11'
-  TARGET_BRANCH: 'gh-pages'  # ← теперь публикация в gh-pages
+  TARGET_BRANCH: 'gh-pages'   # публикация на GitHub Pages
 
 jobs:
   build:
@@ -39,12 +39,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build site
-        working-directory: site
+      - name: Build site (creates ./site)
         run: |
           python create_web.py
 
-      - name: Deploy folder to gh-pages
+      - name: Sanity check site folder
+        run: |
+          test -d site
+          test -n "$(ls -A site || true)" || (echo "site/ is empty" && exit 1)
+
+      - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: ${{ env.TARGET_BRANCH }}
