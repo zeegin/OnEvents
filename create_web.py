@@ -2,6 +2,7 @@ import os
 import yaml
 from datetime import datetime
 from pathlib import Path
+from babel.dates import format_date
 
 # Пути
 EVENTS_DIR = Path("events")
@@ -29,7 +30,7 @@ events.sort(key=lambda e: e["date"])
 # Функция генерации карточки
 def render_event(e):
     date_obj = datetime.strptime(e['date'], "%Y-%m-%d")
-    date_str = date_obj.strftime("%d %B %Y")  # 15 сентября 2025
+    date_str = date_str = format_date(date_obj, format="d MMMM y", locale="ru")  # 15 сентября 2025
 
     return f"""
     <article class="card" itemscope itemtype="https://schema.org/Event">
