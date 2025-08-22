@@ -3,6 +3,7 @@ import yaml
 from datetime import datetime
 from pathlib import Path
 from babel.dates import format_date
+import shutil
 
 # Пути
 EVENTS_DIR = Path("events")
@@ -68,3 +69,6 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Сохраняем результат
 OUTPUT_FILE.write_text(result_html, encoding="utf-8")
+
+# Копируем картинки
+shutil.copytree("img", "site/img", dirs_exist_ok=True)
