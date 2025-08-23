@@ -1,6 +1,6 @@
 # 🎉 OnEvents
 
-## Адрес проета: [https://bestuzheff.github.io/OnEvents/](https://bestuzheff.github.io/OnEvents/)
+## Адрес проета: [https://onevents.ru](https://onevents.ru)
 
 ## ❓ Зачем всё это?
 
