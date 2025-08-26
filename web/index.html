@@ -91,6 +91,10 @@
       OnEvents
     </div>
     <nav aria-label="Главное меню">
+      <label for="cityFilter" class="sr-only">Фильтр по городу</label>
+      <select id="cityFilter" class="pure-input">
+        <option value="">Все города</option>
+      </select>
       <a href="#top">События</a>
       <a href="#about">О проекте</a>
       <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Переключить тему"><span id="themeIcon">🌓</span></button>
@@ -146,5 +150,62 @@
 
 <script>(function themeToggle(){const btn=document.getElementById('themeToggle');const icon=document.getElementById('themeIcon');const root=document.documentElement;function isDark(){return root.classList.contains('dark-theme');}function setTheme(mode){if(mode==='dark'){root.classList.remove('light-theme');root.classList.add('dark-theme');btn.setAttribute('aria-pressed','true');icon.textContent='🌙';}else{root.classList.remove('dark-theme');root.classList.add('light-theme');btn.setAttribute('aria-pressed','false');icon.textContent='☀️';}try{localStorage.setItem('theme',mode);}catch(e){}}btn.addEventListener('click',function(e){e.preventDefault();setTheme(isDark()?'light':'dark');});try{const saved=localStorage.getItem('theme');if(saved==='dark'){icon.textContent='🌙';btn.setAttribute('aria-pressed','true');}else if(saved==='light'){icon.textContent='☀️';btn.setAttribute('aria-pressed','false');}else{if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){icon.textContent='🌙';btn.setAttribute('aria-pressed','true');}else{icon.textContent='☀️';btn.setAttribute('aria-pressed','false');}}}catch(e){}})();</script>
 <script>document.querySelectorAll('a[href^="#"]').forEach(anchor=>{anchor.addEventListener("click",function(e){const targetId=this.getAttribute("href").substring(1);if(!targetId)return;const targetEl=document.getElementById(targetId);if(targetEl){e.preventDefault();targetEl.scrollIntoView({behavior:"smooth"});history.pushState(null,"","#"+targetId);}});});</script>
+<script>
+(function cityFilterInit(){
+  const SELECT_ID = 'cityFilter';
+  function getCards(){ return Array.from(document.querySelectorAll('article.card[data-city]')); }
+  function uniqueCities(){
+    const set = new Set(getCards().map(c => (c.getAttribute('data-city')||'').trim()).filter(Boolean));
+    return Array.from(set).sort((a,b) => a.localeCompare(b, 'ru'));
+  }
+  function buildOptions(){
+    const sel = document.getElementById(SELECT_ID);
+    if(!sel) return;
+    const existing = new Set(Array.from(sel.options).map(o=>o.value));
+    uniqueCities().forEach(city => {
+      if(!existing.has(city)){
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        sel.appendChild(opt);
+      }
+    });
+  }
+  function applyFilter(city){
+    const cards = getCards();
+    cards.forEach(card => {
+      const c = (card.getAttribute('data-city')||'').trim();
+      card.style.display = (!city || c === city) ? '' : 'none';
+    });
+  }
+  function loadSaved(){
+    try { return localStorage.getItem('cityFilter') || ''; } catch(e){ return ''; }
+  }
+  function saveSelected(val){
+    try { localStorage.setItem('cityFilter', val || ''); } catch(e){}
+  }
+  function onChange(e){
+    const val = e.target.value;
+    saveSelected(val);
+    applyFilter(val);
+  }
+  function init(){
+    const sel = document.getElementById(SELECT_ID);
+    if(!sel) return;
+    buildOptions();
+    const saved = loadSaved();
+    if(saved){
+      sel.value = saved;
+    }
+    sel.addEventListener('change', onChange);
+    applyFilter(sel.value || '');
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 </body>
 </html>

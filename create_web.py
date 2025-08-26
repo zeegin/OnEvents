@@ -35,7 +35,7 @@ def render_event(e):
     date_str = date_str = format_date(date_obj, format="d MMMM y", locale="ru")  # 15 сентября 2025
 
     return f"""
-    <article class="card" itemscope itemtype="https://schema.org/Event">
+    <article class="card" itemscope itemtype="https://schema.org/Event"  data-city="{e['city']}">
       <div class="card-header" style="display:flex; align-items:flex-start; gap:1em;">
         <img class="logo-img" alt="Логотип «{e['title']}»" 
              src="img/{e['icon']}" width="72" height="72" 
