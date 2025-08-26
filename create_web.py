@@ -78,3 +78,6 @@ OUTPUT_FILE.write_text(result_html, encoding="utf-8")
 
 # Копируем картинки
 shutil.copytree("img", "site/img", dirs_exist_ok=True)
+
+# Копируем Иконки
+shutil.copytree("icons", "site/icons", dirs_exist_ok=True)

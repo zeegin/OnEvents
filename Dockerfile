@@ -13,10 +13,12 @@ RUN pip install -r requirements.txt
 COPY create_web.py /app/create_web.py
 RUN mkdir -p /app/web
 COPY web/index.html /app/web/index.html
-RUN mkdir -p /app/ing
+RUN mkdir -p /app/img
 COPY img/ /app/img/
 RUN mkdir -p /app/events
 COPY events/ /app/events/
+RUN mkdir -p /app/icons
+COPY icons/ /app/icons/
 
 # Собираем сайт
 RUN python create_web.py
