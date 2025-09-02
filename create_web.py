@@ -33,7 +33,13 @@ events.sort(key=lambda e: e["date"])
 def render_event(e):
     date_obj = datetime.strptime(e['date'], "%Y-%m-%d")
     date_str = date_str = format_date(date_obj, format="d MMMM y", locale="ru")  # 15 сентября 2025
-
+    
+    
+    if len(e['address']) == 0:
+      address_str  = e['city']
+    else:
+      address_str  = e['city'] + ", "  + e['address']
+ 
     return f"""
     <article class="card" itemscope itemtype="https://schema.org/Event"  data-city="{e['city']}">
       <div class="card-header" style="display:flex; align-items:flex-start; gap:1em;">
@@ -49,7 +55,7 @@ def render_event(e):
           <div class="meta-item">
             <span class="icon">📍</span>
             <span itemprop="location" itemscope itemtype="https://schema.org/Place">
-              <span itemprop="addressLocality">{e['city']}, {e['address']}</span>
+              <span itemprop="addressLocality">{address_str}</span>
             </span>
           </div>
         </div>
