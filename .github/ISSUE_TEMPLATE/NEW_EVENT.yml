@@ -1,0 +1,48 @@
+name: НОВОЕ СОБЫТИЕ
+description: Добавление в реестр нового события
+title: "[NEW EVENT]: "
+labels: ["new event"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- Описание мероприятия -->
+  - type: input
+    id: date
+    attributes:
+      label: Дата
+      description: Дата начала события, формат YYYY-MM-DD
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+  - type: input
+    id: city
+    attributes:
+      label: Город
+      description: Город, где будет проходить событие
+      placeholder: Москва
+    validations:
+      required: true
+  - type: input
+    id: address
+    attributes:
+      label: Адрес проведения
+      placeholder: ул. Арбат, 12
+    validations:
+      required: true
+  - type: input
+    id: icon
+    attributes:
+      label: Логотип
+      description: Файл с логотипом (если нет то default.jpg)
+      placeholder: default.jpg
+    validations:
+      required: true
+  - type: input
+    id: registration_url
+    attributes:
+      label: Ссылка на регистрацию
+      placeholder: https://example.com/register
+    validations:
+      required: true
+
