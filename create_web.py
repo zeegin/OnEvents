@@ -61,7 +61,7 @@ def render_event(e):
         </div>
       </div>
       <p>{e['description']}</p>
-      <a href="{e['registration_url']}" role="button">Регистрация</a>
+      <a href="{e['registration_url']}" role="button" target="_blank">Регистрация</a>
     </article>
     """
 
