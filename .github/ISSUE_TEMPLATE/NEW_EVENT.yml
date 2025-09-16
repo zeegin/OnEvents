@@ -3,10 +3,6 @@ description: Добавление в реестр нового события
 title: "[NEW EVENT]: "
 labels: ["new event"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        <!-- Описание мероприятия -->
   - type: input
     id: date
     attributes:
@@ -27,9 +23,10 @@ body:
     id: address
     attributes:
       label: Адрес проведения
+      description: Адрес проведения мероприятия
       placeholder: ул. Арбат, 12
     validations:
-      required: true
+      required: false
   - type: input
     id: icon
     attributes:
@@ -37,12 +34,21 @@ body:
       description: Файл с логотипом (если нет то default.jpg)
       placeholder: default.jpg
     validations:
-      required: true
+      required: false
   - type: input
     id: registration_url
     attributes:
       label: Ссылка на регистрацию
+      description: Если нужны UTM метки, можно их добавить к ссылке
       placeholder: https://example.com/register
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Краткое описание события
+      description: Краткое описание события, чтобы сразу понять, о чем оно.
+      placeholder: 
     validations:
       required: true
 
